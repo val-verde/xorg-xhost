@@ -1,5 +1,5 @@
 /* $Xorg: xhost.c,v 1.4 2001/02/09 02:05:46 xorgcvs Exp $ */
-/* $XdotOrg$ */
+/* $XdotOrg: xc/programs/xhost/xhost.c,v 1.2 2004/04/23 19:54:49 eich Exp $ */
 /*
 
 Copyright 1985, 1986, 1987, 1998  The Open Group
@@ -37,7 +37,7 @@ X Window System is a trademark of The Open Group.
 */
 /* $XFree86: xc/programs/xhost/xhost.c,v 3.26 2003/07/27 14:05:45 herrb Exp $ */
 
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)
+#if defined(TCPCONN) || defined(STREAMSCONN)
 #define NEEDSOCKETS
 #endif
 #ifdef UNIXCONN
@@ -316,15 +316,11 @@ change_host(Display *dpy, char *name, Bool add)
     krb5_data kbuf;
 #endif
 #ifdef NEEDSOCKETS
-#ifndef AMTCPCONN
     static struct in_addr addr;	/* so we can point at it */
 #if defined(IPv6) && defined(AF_INET6)
     static struct in6_addr addr6; /* so we can point at it */
 #else
     struct hostent *hp;
-#endif
-#else
-    static ipaddr_t addr;
 #endif
 #endif
     char *cp;
@@ -346,7 +342,7 @@ change_host(Display *dpy, char *name, Bool add)
     }
     lname[namelen] = '\0';
     if (!strncmp("inet:", lname, 5)) {
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)
+#if defined(TCPCONN) || defined(STREAMSCONN)
 	family = FamilyInternet;
 	name += 5;
 #else
@@ -559,13 +555,8 @@ change_host(Display *dpy, char *name, Bool add)
     /*
      * First see if inet_addr() can grok the name; if so, then use it.
      */
-#ifndef AMTCPCONN
     if (((family == FamilyWild) || (family == FamilyInternet)) &&
 	((addr.s_addr = inet_addr(name)) != -1)) {
-#else
-    if (((family == FamilyWild) || (family == FamilyInternet)) &&
-	((addr = inet_addr(name)) != -1)) {
-#endif
 	ha.family = FamilyInternet;
 	ha.length = 4;		/* but for Cray would be sizeof(addr.s_addr) */
 	ha.address = (char *)&addr; /* but for Cray would be &addr.s_addr */
@@ -709,7 +700,7 @@ jmp_buf env;
 static char *
 get_hostname(XHostAddress *ha)
 {
-#if (defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)) && \
+#if (defined(TCPCONN) || defined(STREAMSCONN)) &&	\
      (!defined(IPv6) || !defined(AF_INET6))
     static struct hostent *hp = NULL;
 #endif
@@ -727,7 +718,7 @@ get_hostname(XHostAddress *ha)
     struct sigaction sa;
 #endif
 
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)
+#if defined(TCPCONN) || defined(STREAMSCONN)
 #if defined(IPv6) && defined(AF_INET6)
     if ((ha->family == FamilyInternet) || (ha->family == FamilyInternet6)) {
 	struct sockaddr_storage saddr;
@@ -817,11 +808,7 @@ get_hostname(XHostAddress *ha)
 	alarm(0);
 	if (hp)
 	    return (hp->h_name);
-#ifndef AMTCPCONN
 	else return (inet_ntoa(*((struct in_addr *)(ha->address))));
-#else
-	else return (inet_ntoa(*((ipaddr_t *)(ha->address))));
-#endif
     }
 #endif /* IPv6 */
 #endif
