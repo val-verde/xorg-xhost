@@ -22,7 +22,10 @@
 .\" not be used in advertising or otherwise to promote the sale, use or
 .\" other dealings in this Software without prior written authorization
 .\" from The Open Group.
-.TH XHOST 1 "Release 6.4" "X Version 11"
+.\"
+.\" $XFree86: xc/programs/xhost/xhost.man,v 1.8 2001/12/14 20:01:45 dawes Exp $
+.\"
+.TH XHOST 1 __xorgversion__
 .SH NAME
 xhost \- server access control program for X
 .SH SYNOPSIS
@@ -110,7 +113,7 @@ is printed.
 .SH FILES
 /etc/X*.hosts
 .SH "SEE ALSO"
-X(1), Xsecurity(1), Xserver(1), xdm(1)
+X(__miscmansuffix__), Xsecurity(__miscmansuffix__), Xserver(1), xdm(1)
 .SH ENVIRONMENT
 .TP 8
 .B DISPLAY

@@ -26,8 +26,9 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
+/* $XFree86: xc/programs/xhost/xhost.c,v 3.20 2001/12/14 20:01:45 dawes Exp $ */
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)
 #define NEEDSOCKETS
 #endif
 #ifdef UNIXCONN
@@ -43,10 +44,13 @@ from The Open Group.
 #include <X11/Xfuncs.h>
 #include <stdio.h>
 #include <signal.h>
+#ifdef X_NOT_POSIX
 #include <setjmp.h>
+#endif
 #include <ctype.h>
 #include <X11/Xauth.h>
 #include <X11/Xmu/Error.h>
+#include <stdlib.h>
 
 #ifdef NEEDSOCKETS
 #ifdef att
@@ -58,20 +62,23 @@ typedef long sign32;
 #include <interlan/netdb.h>
 #include <interlan/in.h>
 #else
+#ifndef Lynx
 #include <sys/socket.h>
+#else
+#include <socket.h>
+#endif
 #include <netdb.h>
 #include <netinet/in.h>
 #endif
 #endif /* NEEDSOCKETS */
 
-#ifdef notdef
+#ifndef BAD_ARPAINET
 #include <arpa/inet.h>
-	bogus definition of inet_makeaddr() in BSD 4.2 and Ultrix
 #else
-#if !defined(hpux) && !defined(NCR)
+/* bogus definition of inet_makeaddr() in BSD 4.2 and Ultrix */
 extern unsigned long inet_makeaddr();
 #endif
-#endif
+
 #ifdef DNETCONN
 #include <netdnet/dn.h>
 #include <netdnet/dnetdb.h>
@@ -97,17 +104,22 @@ extern unsigned long inet_makeaddr();
 #include <sys/param.h>
 #define NGROUPS_MAX NGROUPS
 #endif
+#ifdef sun
+/* Go figure, there's no getdomainname() prototype available */
+extern int getdomainname(char *name, size_t len);
 #endif
- 
-static int local_xerror();
-static char *get_hostname();
+#endif
+
+static int change_host(Display *dpy, char *name, Bool add);
+static char *get_hostname(XHostAddress *ha);
+static int local_xerror(Display *dpy, XErrorEvent *rep);
 
 #ifdef SIGNALRETURNSINT
 #define signal_t int
 #else
 #define signal_t void
 #endif
-static signal_t nameserver_lost();
+static signal_t nameserver_lost(int sig);
 
 #define NAMESERVER_TIMEOUT 5	/* time to wait for nameserver */
 
@@ -116,8 +128,8 @@ int nameserver_timedout;
 char *ProgramName;
 
 #ifdef NEEDSOCKETS
-static int XFamily(af)
-    int af;
+static int 
+XFamily(int af)
 {
     int i;
     static struct _familyMap {
@@ -144,9 +156,8 @@ static int XFamily(af)
 
 Display *dpy;
 
-main(argc, argv)
-    int argc;
-    char **argv;
+int
+main(int argc, char *argv[])
 {
     register char *arg;
     int i, nhosts = 0;
@@ -272,10 +283,8 @@ main(argc, argv)
  * address.
  */
 
-int change_host (dpy, name, add)
-    Display *dpy;
-    char *name;
-    Bool add;
+static int 
+change_host(Display *dpy, char *name, Bool add)
 {
     struct hostent *hp;
     XHostAddress ha;
@@ -286,7 +295,11 @@ int change_host (dpy, name, add)
     krb5_data kbuf;
 #endif
 #ifdef NEEDSOCKETS
+#ifndef AMTCPCONN
     static struct in_addr addr;	/* so we can point at it */
+#else
+    static ipaddr_t addr;
+#endif
 #endif
     char *cp;
 #ifdef DNETCONN
@@ -307,7 +320,7 @@ int change_host (dpy, name, add)
     }
     lname[namelen] = '\0';
     if (!strncmp("inet:", lname, 5)) {
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)
 	family = FamilyInternet;
 	name += 5;
 #else
@@ -461,7 +474,11 @@ int change_host (dpy, name, add)
     /*
      * First see if inet_addr() can grok the name; if so, then use it.
      */
+#ifndef AMTCPCONN
     if ((addr.s_addr = inet_addr(name)) != -1) {
+#else
+    if ((addr = inet_addr(name)) != -1) {
+#endif
 	ha.family = FamilyInternet;
 	ha.length = 4;		/* but for Cray would be sizeof(addr.s_addr) */
 	ha.address = (char *)&addr; /* but for Cray would be &addr.s_addr */
@@ -520,14 +537,15 @@ int change_host (dpy, name, add)
  * be found.
  */
 
+#ifdef X_NOT_POSIX
 jmp_buf env;
+#endif
 
-static char *get_hostname (ha)
-    XHostAddress *ha;
+static char *
+get_hostname(XHostAddress *ha)
 {
-#if defined(TCPCONN) || defined(STREAMSCONN)
-    struct hostent *hp = NULL;
-    char *inet_ntoa();
+#if defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)
+    static struct hostent *hp = NULL;
 #endif
 #ifdef DNETCONN
     struct nodeent *np;
@@ -539,8 +557,11 @@ static char *get_hostname (ha)
     char *kname;
     static char kname_out[255];
 #endif
+#ifndef X_NOT_POSIX
+    struct sigaction sa;
+#endif
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN) || defined(STREAMSCONN) || defined(AMTCPCONN)
     if (ha->family == FamilyInternet) {
 #ifdef CRAY
 	struct in_addr t_addr;
@@ -554,22 +575,39 @@ static char *get_hostname (ha)
 	   gethostbyaddr will continue after a signal, so we have to
 	   jump out of it. 
 	   */
+#ifndef X_NOT_POSIX
+	memset(&sa, 0, sizeof sa);
+	sa.sa_handler = nameserver_lost;
+	sa.sa_flags = 0;	/* don't restart syscalls */
+	sigaction(SIGALRM, &sa, NULL);
+#else
 	signal(SIGALRM, nameserver_lost);
+#endif
 	alarm(4);
+#ifdef X_NOT_POSIX
 	if (setjmp(env) == 0) {
+#endif
 	    hp = gethostbyaddr (ha->address, ha->length, AF_INET);
+#ifdef X_NOT_POSIX
 	}
+#endif
 	alarm(0);
 	if (hp)
 	    return (hp->h_name);
+#ifndef AMTCPCONN
 	else return (inet_ntoa(*((struct in_addr *)(ha->address))));
+#else
+	else return (inet_ntoa(*((ipaddr_t *)(ha->address))));
+#endif
     }
 #endif
     if (ha->family == FamilyNetname) {
 	static char netname[512];
 	int len;
 #ifdef SECURE_RPC
-	int uid, gid, gidlen, gidlist[NGROUPS_MAX];
+	int gidlen;
+	uid_t uid;
+	gid_t gid, gidlist[NGROUPS_MAX];
 #endif
 
 	if (ha->length < sizeof(netname) - 1)
@@ -581,7 +619,6 @@ static char *get_hostname (ha)
 #ifdef SECURE_RPC
 	if (netname2user(netname, &uid, &gid, &gidlen, gidlist)) {
 	    struct passwd *pwd;
-	    char *cp;
 
 	    pwd = getpwuid(uid);
 	    if (pwd)
@@ -621,10 +658,16 @@ static char *get_hostname (ha)
     return (NULL);
 }
 
-static signal_t nameserver_lost()
+/*ARGUSED*/
+static signal_t 
+nameserver_lost(int sig)
 {
     nameserver_timedout = 1;
+#ifdef X_NOT_POSIX
+    /* not needed with POSIX signals - stuck syscalls will not 
+       be restarted after signal delivery */
     longjmp(env, -1);
+#endif
 }
 
 /*
@@ -632,9 +675,8 @@ static signal_t nameserver_lost()
  * that an X_GetHosts request for an unknown address format was received, just
  * return, otherwise print the normal error message and continue.
  */
-static int local_xerror (dpy, rep)
-    Display *dpy;
-    XErrorEvent *rep;
+static int 
+local_xerror(Display *dpy, XErrorEvent *rep)
 {
     if ((rep->error_code == BadAccess) && (rep->request_code == X_ChangeHosts)) {
 	fprintf (stderr, 
@@ -655,3 +697,12 @@ static int local_xerror (dpy, rep)
     XmuPrintDefaultErrorMessage (dpy, rep, stderr);
     return 0;
 }
+
+#ifdef __CYGWIN__
+void sethostent(int x)
+{}
+
+void endhostent()
+{}
+#endif
+
