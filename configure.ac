@@ -1,7 +1,7 @@
 # $XdotOrg: $
 
 AC_PREREQ([2.57])
-AC_INIT(xhost,[7.0], [xorg@freedesktop.org],xhost)
+AC_INIT(xhost,[0.99.0], [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],xhost)
 AM_INIT_AUTOMAKE([dist-bzip2])
 AM_MAINTAINER_MODE
 
@@ -22,5 +22,7 @@ XTRANS_CONNECTION_FLAGS
 
 # Secure RPC detection macro from xtrans.m4
 XTRANS_SECURE_RPC_FLAGS
+
+XORG_RELEASE_VERSION
 
 AC_OUTPUT([Makefile])
