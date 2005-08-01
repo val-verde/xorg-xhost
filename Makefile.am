@@ -6,4 +6,4 @@ xhost_CFLAGS = @XHOST_CFLAGS@
 
 xhost_LDADD = @XHOST_LIBS@
 
-dist_man_MANS = xhost.man
+dist_man1_MANS = xhost.man
