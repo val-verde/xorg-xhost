@@ -1,7 +1,7 @@
 # $XdotOrg: $
 
 AC_PREREQ([2.57])
-AC_INIT(xhost,[0.99.3], [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],xhost)
+AC_INIT(xhost,[1.0.0], [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],xhost)
 AM_INIT_AUTOMAKE([dist-bzip2])
 AM_MAINTAINER_MODE
 
