@@ -119,7 +119,9 @@ the access list in the appropriate inet or inet6 family.
 Server interpreted addresses consist of a case-sensitive type tag and a
 string representing a given value, separated by a colon.  For example,
 "si:hostname:almas" is a server interpreted address of type \fIhostname\fP,
-with a value of \fIalmas\fP.
+with a value of \fIalmas\fP.   For more information on the available forms
+of server interpreted addresses, see the \fIXsecurity\fP(__miscmansuffix__)
+manual page.
 .SH DIAGNOSTICS
 For each name added to the access control list,
 a line of the form "\fIname\fP being added to access control list"
