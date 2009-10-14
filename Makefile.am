@@ -2,7 +2,7 @@ bin_PROGRAMS = xhost
 
 xhost_SOURCES = xhost.c
 
-AM_CFLAGS = $(XHOST_CFLAGS)
+AM_CFLAGS = $(CWARNFLAGS) $(XHOST_CFLAGS)
 xhost_LDADD = $(XHOST_LIBS)
 
 appman_PRE = xhost.man
@@ -44,4 +44,4 @@ MAN_SUBSTS = \
 SUFFIXES = .$(APP_MAN_SUFFIX) .man
 
 .man.$(APP_MAN_SUFFIX):
-	sed $(MAN_SUBSTS) < $< > $@
+	$(AM_V_GEN)$(SED) $(MAN_SUBSTS) < $< > $@
