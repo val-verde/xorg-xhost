@@ -2,7 +2,7 @@
 
 AC_PREREQ([2.57])
 AC_INIT(xhost,[1.0.3], [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],xhost)
-AM_INIT_AUTOMAKE([dist-bzip2])
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
 # Require xorg-macros 1.3 or later: XORG_DEFAULT_OPTIONS
