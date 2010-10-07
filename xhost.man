@@ -137,6 +137,11 @@ string representing a given value, separated by a colon.  For example,
 with a value of \fIalmas\fP.   For more information on the available forms
 of server interpreted addresses, see the \fIXsecurity\fP(__miscmansuffix__)
 manual page.
+.PP
+The initial access control list for display number \fBn\fP
+may be set by the file \fI/etc/X\fBn\fI.hosts\fR, where
+\fBn\fP is the display number of the server.  See \fIXserver\fP(1)
+for details.
 .SH DIAGNOSTICS
 For each name added to the access control list,
 a line of the form "\fIname\fP being added to access control list"
@@ -144,8 +149,6 @@ is printed.
 For each name removed from the access control list,
 a line of the form "\fIname\fP being removed from access control list"
 is printed.
-.SH FILES
-/etc/X*.hosts
 .SH "SEE ALSO"
 X(__miscmansuffix__), Xsecurity(__miscmansuffix__), Xserver(1), xdm(1), xauth(1), getaddrinfo(3)
 .SH ENVIRONMENT
