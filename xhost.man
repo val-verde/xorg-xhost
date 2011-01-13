@@ -20,7 +20,7 @@
 .\" DEALINGS IN THE SOFTWARE.
 .\"
 .\" Copyright 1988, 1998  The Open Group
-.\" 
+.\"
 .\" Permission is hereby granted, free of charge, to any person obtaining a
 .\" copy of this software and associated documentation files (the
 .\" "Software"), to deal in the Software without restriction, including
@@ -30,7 +30,7 @@
 .\" copyright notice(s) and this permission notice appear in all copies of
 .\" the Software and that both the above copyright notice(s) and this
 .\" permission notice appear in supporting documentation.
-.\" 
+.\"
 .\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 .\" OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 .\" MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
@@ -40,12 +40,12 @@
 .\" FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 .\" NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
 .\" WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-.\" 
+.\"
 .\" Except as contained in this notice, the name of a copyright holder
 .\" shall not be used in advertising or otherwise to promote the sale, use
 .\" or other dealings in this Software without prior written authorization
 .\" of the copyright holder.
-.\" 
+.\"
 .\" X Window System is a trademark of The Open Group.
 .\"
 .TH XHOST 1 __xorgversion__
@@ -55,7 +55,7 @@ xhost \- server access control program for X
 .B xhost
 [[+\-]name ...]
 .SH DESCRIPTION
-The \fIxhost\fP program 
+The \fIxhost\fP program
 is used to add and delete host names or user names to the list allowed
 to make connections to the X server.  In the case of hosts, this provides
 a rudimentary form of privacy control and security.  It is only sufficient
@@ -84,7 +84,7 @@ Existing connections are not broken, but new
 connection attempts will be denied.
 Note that the current machine is allowed to be removed; however, further
 connections (including attempts to add it back) will not be permitted.
-Resetting the server (thereby breaking all connections) 
+Resetting the server (thereby breaking all connections)
 is the only way to allow local connections again.
 .TP 8
 .B \+
@@ -158,9 +158,9 @@ to get the default host and display to use.
 .SH BUGS
 .PP
 You can't specify a display on the command line because
-.B \-display 
+.B \-display
 is a valid command line argument (indicating that you want
-to remove the machine named 
+to remove the machine named
 .I ``display''
 from the access list).
 .PP
