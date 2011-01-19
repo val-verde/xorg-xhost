@@ -26,4 +26,7 @@ XTRANS_CONNECTION_FLAGS
 # Secure RPC detection macro from xtrans.m4
 XTRANS_SECURE_RPC_FLAGS
 
-AC_OUTPUT([Makefile])
+AC_CONFIG_FILES([
+	Makefile
+	man/Makefile])
+AC_OUTPUT
