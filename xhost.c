@@ -450,7 +450,7 @@ change_host(Display *dpy, char *name, Bool add)
 
     if (family == FamilyServerInterpreted) {
 	XServerInterpretedAddress siaddr;
-	int namelen;
+	int namelen, rc;
 
 	cp = strchr(name, ':');
 	if (cp == NULL || cp == name) {
@@ -472,11 +472,14 @@ change_host(Display *dpy, char *name, Bool add)
 	siaddr.value = siaddr.type + siaddr.typelength + 1;
 	siaddr.valuelength = namelen - (siaddr.typelength + 1);
 	if (add)
-	    XAddHost(dpy, &ha);
+	    rc = XAddHost(dpy, &ha);
 	else
-	    XRemoveHost(dpy, &ha);
+	    rc = XRemoveHost(dpy, &ha);
 	free(siaddr.type);
-	printf( "%s %s\n", name, add ? add_msg : remove_msg);
+	printf( "%s %s%s\n", name, rc == 1 ? "" : "failed when ",
+		add ? add_msg : remove_msg);
+	if (rc != 1)
+	    return 0;
 	return 1;
     }
 
