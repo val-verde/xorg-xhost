@@ -75,11 +75,18 @@ Prints a usage message.
 .BI "[+]" "name"
 The given \fIname\fP (the plus sign is optional)
 is added to the list allowed to connect to the X server.
-The name can be a host name or a user name.
+The name can be a host name or a complete name (See
+.SM
+.B NAMES
+for more details).
 .TP 8
 .BI \- "name"
 The given \fIname\fP is removed from the list of allowed
-to connect to the server.  The name can be a host name or a user name.
+to connect to the server.  The name can be a host name or a complete
+name (See
+.SM
+.B NAMES
+for more details).
 Existing connections are not broken, but new
 connection attempts will be denied.
 Note that the current machine is allowed to be removed; however, further
@@ -130,6 +137,11 @@ names that contain an at-sign (@) are assumed to be in the nis family.
 Otherwise they are assumed to be Internet addresses. If compiled to support
 IPv6, then all IPv4 and IPv6 addresses returned by getaddrinfo(__libmansuffix__) are added to
 the access list in the appropriate inet or inet6 family.
+.PP
+The local family specifies all the local connections at once. However,
+the server interpreted address "si:localuser:\fIusername\fP" can be
+used to specify a single local user. (See the
+\fIXsecurity\fP(__miscmansuffix__) manual page for more details.)
 .PP
 Server interpreted addresses consist of a case-sensitive type tag and a
 string representing a given value, separated by a colon.  For example,
