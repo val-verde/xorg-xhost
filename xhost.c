@@ -213,6 +213,11 @@ main(int argc, char *argv[])
  
     ProgramName = argv[0];
 
+    if (argc == 2 && !strcmp(argv[1], "-help")) {
+	fprintf(stderr, "usage: %s [[+-]hostname ...]\n", argv[0]);
+	exit(1);
+    }
+
     if ((dpy = XOpenDisplay(NULL)) == NULL) {
 	fprintf(stderr, "%s:  unable to open display \"%s\"\n",
 		ProgramName, XDisplayName (NULL));
@@ -281,11 +286,6 @@ main(int argc, char *argv[])
 	exit(0);
     }
  
-    if (argc == 2 && !strcmp(argv[1], "-help")) {
-	fprintf(stderr, "usage: %s [[+-]hostname ...]\n", argv[0]);
-	exit(1);
-    }
-
     for (i = 1; i < argc; i++) {
 	arg = argv[i];
 	if (*arg == '-') {
