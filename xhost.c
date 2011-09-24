@@ -143,7 +143,7 @@ extern int getdomainname(char *name, size_t len);
 #endif
 
 static int change_host(Display *dpy, char *name, Bool add);
-static char *get_hostname(XHostAddress *ha);
+static const char *get_hostname(XHostAddress *ha);
 static int local_xerror(Display *dpy, XErrorEvent *rep);
 
 #ifdef RETSIGTYPE /* autoconf AC_TYPE_SIGNAL */
@@ -200,7 +200,7 @@ main(int argc, char *argv[])
 {
     register char *arg;
     int i, nhosts = 0;
-    char *hostname;
+    const char *hostname;
     int nfailed = 0;
     XHostAddress *list;
     Bool enabled = False;
@@ -355,8 +355,8 @@ change_host(Display *dpy, char *name, Bool add)
     struct nodeent *np;
     static struct dn_naddr dnaddr;
 #endif				/* DNETCONN */
-    static char *add_msg = "being added to access control list";
-    static char *remove_msg = "being removed from access control list";
+    static const char *add_msg = "being added to access control list";
+    static const char *remove_msg = "being removed from access control list";
 
     namelen = strlen(name);
     if ((lname = (char *)malloc(namelen+1)) == NULL) {
@@ -733,7 +733,7 @@ change_host(Display *dpy, char *name, Bool add)
 jmp_buf env;
 #endif
 
-static char *
+static const char *
 get_hostname(XHostAddress *ha)
 {
 #if (defined(TCPCONN) || defined(STREAMSCONN)) &&	\
