@@ -18,7 +18,10 @@ AC_TYPE_SIGNAL
 XORG_DEFAULT_OPTIONS
 
 # Checks for pkg-config packages
-PKG_CHECK_MODULES(XHOST, x11 xmuu xau)
+# - Both CFLAGS & LIBS needed:
+PKG_CHECK_MODULES(XHOST, x11 xmuu)
+# - Only CFLAGS needed, not libs:
+PKG_CHECK_MODULES(XAU, xau)
 
 # Transport selection macro from xtrans.m4
 XTRANS_CONNECTION_FLAGS
