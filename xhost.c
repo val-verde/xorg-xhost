@@ -82,12 +82,18 @@ X Window System is a trademark of The Open Group.
 #include <stdlib.h>
 
 #ifdef NEEDSOCKETS
+#ifdef WIN32
+#include <X11/Xwinsock.h>
+#else
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#endif
 #endif /* NEEDSOCKETS */
 
+#ifndef WIN32
 #include <arpa/inet.h>
+#endif
 
 
 #ifdef SECURE_RPC
