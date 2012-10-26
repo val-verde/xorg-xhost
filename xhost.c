@@ -653,7 +653,9 @@ get_hostname(XHostAddress *ha)
     char *kname;
     static char kname_out[255];
 #endif
+#ifdef SIGALRM
     struct sigaction sa;
+#endif
 
 #ifdef TCPCONN
 #if defined(IPv6) && defined(AF_INET6)
@@ -690,14 +692,18 @@ get_hostname(XHostAddress *ha)
 	   gethostbyaddr will continue after a signal, so we have to
 	   jump out of it. 
 	   */
+#ifdef SIGALRM
 	memset(&sa, 0, sizeof sa);
 	sa.sa_handler = nameserver_lost;
 	sa.sa_flags = 0;	/* don't restart syscalls */
 	sigaction(SIGALRM, &sa, NULL);
 	alarm(NAMESERVER_TIMEOUT);
+#endif
 	getnameinfo((struct sockaddr *) &saddr, saddrlen, inetname,
 		    sizeof(inetname), NULL, 0, 0);
+#ifdef SIGALRM
 	alarm(0);
+#endif
 	if (nameserver_timedout || inetname[0] == '\0')
 	    inet_ntop(((struct sockaddr *)&saddr)->sa_family, ha->address,
 		inetname, sizeof(inetname));
@@ -711,13 +717,17 @@ get_hostname(XHostAddress *ha)
 	   gethostbyaddr will continue after a signal, so we have to
 	   jump out of it. 
 	   */
+#ifdef SIGALRM
 	memset(&sa, 0, sizeof sa);
 	sa.sa_handler = nameserver_lost;
 	sa.sa_flags = 0;	/* don't restart syscalls */
 	sigaction(SIGALRM, &sa, NULL);
 	alarm(4);
+#endif
 	hp = gethostbyaddr (ha->address, ha->length, AF_INET);
+#ifdef SIGALRM
 	alarm(0);
+#endif
 	if (hp)
 	    return (hp->h_name);
 	else return (inet_ntoa(*((struct in_addr *)(ha->address))));
