@@ -29,6 +29,15 @@ XTRANS_CONNECTION_FLAGS
 # Secure RPC detection macro from xtrans.m4
 XTRANS_SECURE_RPC_FLAGS
 
+# Link with winsock if mingw target
+case $host_os in
+ *mingw*)
+  AC_CHECK_LIB([ws2_32],[main])
+  ;;
+ *)
+  ;;
+esac
+
 AC_CONFIG_FILES([
 	Makefile
 	man/Makefile])
