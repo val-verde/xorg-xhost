@@ -864,7 +864,7 @@ local_xerror(Display *dpy, XErrorEvent *rep)
     return 0;
 }
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined(WIN32)
 void sethostent(int x)
 {}
 
