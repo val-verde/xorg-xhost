@@ -65,9 +65,6 @@ X Window System is a trademark of The Open Group.
 #ifdef UNIXCONN
 #define NEEDSOCKETS
 #endif
-#ifdef DNETCONN
-#define NEEDSOCKETS
-#endif
 
 #include <X11/Xlib.h>
 #include <X11/Xos.h>
@@ -111,10 +108,6 @@ typedef long sign32;
 extern unsigned long inet_makeaddr();
 #endif
 
-#ifdef DNETCONN
-#include <netdnet/dn.h>
-#include <netdnet/dnetdb.h>
-#endif
 
 #ifdef SECURE_RPC
 #include <pwd.h>
@@ -204,12 +197,6 @@ main(int argc, char *argv[])
     int nfailed = 0;
     XHostAddress *list;
     Bool enabled = False;
-#ifdef DNETCONN
-    char *dnet_htoa();
-    struct nodeent *np;
-    struct dn_naddr *nlist, dnaddr, *dnaddrp, *dnet_addr();
-    char *cp;
-#endif
  
     ProgramName = argv[0];
 
@@ -228,9 +215,6 @@ main(int argc, char *argv[])
  
  
     if (argc == 1) {
-#ifdef DNETCONN
-	setnodeent(1);		/* keep the database accessed */
-#endif
 	sethostent(1);		/* don't close the data base each time */
 	list = XListHosts(dpy, &nhosts, &enabled);
 	if (enabled)
@@ -350,11 +334,6 @@ change_host(Display *dpy, char *name, Bool add)
 #endif
 #endif
     char *cp;
-#ifdef DNETCONN
-    struct dn_naddr *dnaddrp;
-    struct nodeent *np;
-    static struct dn_naddr dnaddr;
-#endif				/* DNETCONN */
     static const char *add_msg = "being added to access control list";
     static const char *remove_msg = "being removed from access control list";
 
@@ -403,14 +382,9 @@ change_host(Display *dpy, char *name, Bool add)
     }
 #endif /* ACCEPT_INETV6 */
     else if (!strncmp("dnet:", lname, 5)) {
-#ifdef DNETCONN
-	family = FamilyDECnet;
-	name += 5;
-#else
 	fprintf (stderr, "%s: not compiled for DECnet\n", ProgramName);
 	free(lname);
 	return 0;
-#endif
     }
     else if (!strncmp("nis:", lname, 4)) {
 #ifdef SECURE_RPC
@@ -476,34 +450,6 @@ change_host(Display *dpy, char *name, Bool add)
 	return 1;
     }
 
-#ifdef DNETCONN
-    if (family == FamilyDECnet || ((family == FamilyWild) &&
-	(cp = strchr(name, ':')) && (*(cp + 1) == ':') &&
-	!(*cp = '\0'))) {
-	ha.family = FamilyDECnet;
-	if (dnaddrp = dnet_addr(name)) {
-	    dnaddr = *dnaddrp;
-	} else {
-	    if ((np = getnodebyname (name)) == NULL) {
-		fprintf (stderr, "%s:  unable to get node name for \"%s::\"\n",
-			 ProgramName, name);
-		return 0;
-	    }
-	    dnaddr.a_len = np->n_length;
-	    memmove( dnaddr.a_addr, np->n_addr, np->n_length);
-	}
-	ha.length = sizeof(struct dn_naddr);
-	ha.address = (char *)&dnaddr;
-	if (add) {
-	    XAddHost (dpy, &ha);
-	    printf ("%s:: %s\n", name, add_msg);
-	} else {
-	    XRemoveHost (dpy, &ha);
-	    printf ("%s:: %s\n", name, remove_msg);
-	}
-	return 1;
-    }
-#endif				/* DNETCONN */
 #ifdef K5AUTH
     if (family == FamilyKrb5Principal) {
 	krb5_error_code retval;
@@ -733,10 +679,6 @@ get_hostname(XHostAddress *ha)
      (!defined(IPv6) || !defined(AF_INET6))
     static struct hostent *hp = NULL;
 #endif
-#ifdef DNETCONN
-    struct nodeent *np;
-    static char nodeaddr[5 + 2 * DN_MAXADDL];
-#endif				/* DNETCONN */
 #ifdef K5AUTH
     krb5_principal princ;
     krb5_data kbuf;
@@ -868,18 +810,6 @@ get_hostname(XHostAddress *ha)
 #endif
 	return (netname);
     }
-#ifdef DNETCONN
-    if (ha->family == FamilyDECnet) {
-	struct dn_naddr *addr_ptr = (struct dn_naddr *) ha->address;
-
-	if (np = getnodebyaddr(addr_ptr->a_addr, addr_ptr->a_len, AF_DECnet)) {
-	    sprintf(nodeaddr, "%s", np->n_name);
-	} else {
-	    sprintf(nodeaddr, "%s", dnet_htoa(ha->address));
-	}
-	return(nodeaddr);
-    }
-#endif
 #ifdef K5AUTH
     if (ha->family == FamilyKrb5Principal) {
 	kbuf.data = ha->address;
