@@ -59,7 +59,7 @@ X Window System is a trademark of The Open Group.
 #include "config.h"
 #endif
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#ifdef TCPCONN
 #define NEEDSOCKETS
 #endif
 #ifdef UNIXCONN
@@ -347,7 +347,7 @@ change_host(Display *dpy, char *name, Bool add)
     }
     lname[namelen] = '\0';
     if (!strncmp("inet:", lname, 5)) {
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#ifdef TCPCONN
 	family = FamilyInternet;
 	name += 5;
 #else
@@ -357,8 +357,7 @@ change_host(Display *dpy, char *name, Bool add)
 #endif
     }
     else if (!strncmp("inet6:", lname, 6)) {
-#if (defined(TCPCONN) || defined(STREAMSCONN)) && \
-    defined(IPv6) && defined(AF_INET6)
+#if defined(TCPCONN) && defined(IPv6) && defined(AF_INET6)
 	family = FamilyInternet6;
 	name += 6;
 #else
@@ -370,8 +369,7 @@ change_host(Display *dpy, char *name, Bool add)
 #ifdef ACCEPT_INETV6 /* Allow inetv6 as an alias for inet6 for compatibility
 			with original X11 over IPv6 draft. */
     else if (!strncmp("inetv6:", lname, 7)) {
-#if (defined(TCPCONN) || defined(STREAMSCONN)) && \
-    defined(IPv6) && defined(AF_INET6)
+#if defined(TCPCONN) && defined(IPv6) && defined(AF_INET6)
 	family = FamilyInternet6;
 	name += 7;
 #else
@@ -675,8 +673,7 @@ jmp_buf env;
 static const char *
 get_hostname(XHostAddress *ha)
 {
-#if (defined(TCPCONN) || defined(STREAMSCONN)) &&	\
-     (!defined(IPv6) || !defined(AF_INET6))
+#if defined(TCPCONN) && (!defined(IPv6) || !defined(AF_INET6))
     static struct hostent *hp = NULL;
 #endif
 #ifdef K5AUTH
@@ -689,7 +686,7 @@ get_hostname(XHostAddress *ha)
     struct sigaction sa;
 #endif
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#ifdef TCPCONN
 #if defined(IPv6) && defined(AF_INET6)
     if ((ha->family == FamilyInternet) || (ha->family == FamilyInternet6)) {
 	struct sockaddr_storage saddr;
