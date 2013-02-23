@@ -131,7 +131,7 @@ static char *ProgramName;
 static int 
 XFamily(int af)
 {
-    int i;
+    unsigned int i;
     static struct _familyMap {
 	int af, xf;
     } familyMap[] = {
@@ -290,7 +290,8 @@ change_host(Display *dpy, char *name, Bool add)
 {
     XHostAddress ha;
     char *lname;
-    int namelen, i, family = FamilyWild;
+    size_t namelen, i;
+    int family = FamilyWild;
 #ifdef K5AUTH
     krb5_principal princ;
     krb5_data kbuf;
@@ -661,7 +662,7 @@ get_hostname(XHostAddress *ha)
     if ((ha->family == FamilyInternet) || (ha->family == FamilyInternet6)) {
 	struct sockaddr_storage saddr;
 	static char inetname[NI_MAXHOST];
-	int saddrlen;
+	unsigned int saddrlen;
 
 	inetname[0] = '\0';
 	memset(&saddr, 0, sizeof saddr);
