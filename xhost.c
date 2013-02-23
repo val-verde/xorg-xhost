@@ -157,8 +157,6 @@ XFamily(int af)
 }
 #endif /* NEEDSOCKETS */
 
-static Display *dpy;
-
 int
 main(int argc, char *argv[])
 {
@@ -168,6 +166,7 @@ main(int argc, char *argv[])
     int nfailed = 0;
     XHostAddress *list;
     Bool enabled = False;
+    Display *dpy;
  
     ProgramName = argv[0];
 
