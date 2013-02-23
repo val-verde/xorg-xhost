@@ -745,12 +745,6 @@ get_hostname(XHostAddress *ha)
     }
 #else
     if (ha->family == FamilyInternet) {
-#ifdef CRAY
-	struct in_addr t_addr;
-	bzero((char *)&t_addr, sizeof(t_addr));
-	bcopy(ha->address, (char *)&t_addr, 4);
-	ha->address = (char *)&t_addr;
-#endif
 	/* gethostbyaddr can take a LONG time if the host does not exist.
 	   Assume that if it does not respond in NAMESERVER_TIMEOUT seconds
 	   that something is wrong and do not make the user wait.
