@@ -87,12 +87,7 @@ X Window System is a trademark of The Open Group.
 #include <netinet/in.h>
 #endif /* NEEDSOCKETS */
 
-#ifndef BAD_ARPAINET
 #include <arpa/inet.h>
-#else
-/* bogus definition of inet_makeaddr() in BSD 4.2 and Ultrix */
-extern unsigned long inet_makeaddr();
-#endif
 
 
 #ifdef SECURE_RPC
