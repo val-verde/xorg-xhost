@@ -91,11 +91,7 @@ typedef long sign32;
 #include <interlan/netdb.h>
 #include <interlan/in.h>
 #else
-#ifndef Lynx
 #include <sys/socket.h>
-#else
-#include <socket.h>
-#endif
 #include <netdb.h>
 #include <netinet/in.h>
 #endif
