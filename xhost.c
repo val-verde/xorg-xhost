@@ -119,17 +119,7 @@ extern int getdomainname(char *name, size_t len);
 static int change_host(Display *dpy, char *name, Bool add);
 static const char *get_hostname(XHostAddress *ha);
 static int local_xerror(Display *dpy, XErrorEvent *rep);
-
-#ifdef RETSIGTYPE /* autoconf AC_TYPE_SIGNAL */
-# define signal_t RETSIGTYPE
-#else /* Imake */
-#ifdef SIGNALRETURNSINT
-#define signal_t int
-#else
-#define signal_t void
-#endif
-#endif /* RETSIGTYPE */
-static signal_t nameserver_lost(int sig);
+static void nameserver_lost(int sig);
 
 #define NAMESERVER_TIMEOUT 5	/* time to wait for nameserver */
 
@@ -829,7 +819,7 @@ get_hostname(XHostAddress *ha)
 }
 
 /*ARGUSED*/
-static signal_t 
+static void
 nameserver_lost(int sig)
 {
     nameserver_timedout = 1;

@@ -17,8 +17,6 @@ m4_ifndef([XORG_MACROS_VERSION],
 XORG_MACROS_VERSION(1.8)
 XORG_DEFAULT_OPTIONS
 
-AC_TYPE_SIGNAL
-
 # Checks for pkg-config packages
 # - Both CFLAGS & LIBS needed:
 PKG_CHECK_MODULES(XHOST, x11 xmuu)
