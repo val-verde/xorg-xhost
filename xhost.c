@@ -765,8 +765,8 @@ get_hostname(XHostAddress *ha)
 
 	    pwd = getpwuid(uid);
 	    if (pwd)
-		sprintf(netname, "%s@ (%*.*s)", pwd->pw_name,
-			ha->length, ha->length, ha->address);
+		snprintf(netname, sizeof(netname), "%s@ (%*.*s)",
+			 pwd->pw_name, ha->length, ha->length, ha->address);
 	}
 #endif
 	return (netname);
