@@ -82,19 +82,9 @@ X Window System is a trademark of The Open Group.
 #include <stdlib.h>
 
 #ifdef NEEDSOCKETS
-#ifdef att
-typedef unsigned short unsign16;
-typedef unsigned long unsign32;
-typedef short sign16;
-typedef long sign32;
-#include <interlan/socket.h>
-#include <interlan/netdb.h>
-#include <interlan/in.h>
-#else
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#endif
 #endif /* NEEDSOCKETS */
 
 #ifndef BAD_ARPAINET
