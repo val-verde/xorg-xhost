@@ -19,7 +19,7 @@ XORG_DEFAULT_OPTIONS
 
 # Checks for pkg-config packages
 # - Both CFLAGS & LIBS needed:
-PKG_CHECK_MODULES(XHOST, x11 xmuu)
+PKG_CHECK_MODULES(XHOST, [xproto >= 7.0.22 x11 xmuu])
 # - Only CFLAGS needed, not libs:
 PKG_CHECK_MODULES(XAU, xau)
 

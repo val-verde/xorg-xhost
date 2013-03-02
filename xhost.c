@@ -809,7 +809,7 @@ get_hostname(XHostAddress *ha)
 
 /*ARGUSED*/
 static void
-nameserver_lost(int sig)
+nameserver_lost(_X_UNUSED int sig)
 {
     nameserver_timedout = 1;
 }
