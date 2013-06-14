@@ -448,8 +448,9 @@ change_host(Display *dpy, char *name, Bool add)
     }
 #endif
     if (family == FamilyLocalHost) {
+	char empty[] = "";
 	ha.length = 0;
-	ha.address = "";
+	ha.address = empty;
 	ha.family = family;
 	if (add)
 	    XAddHost(dpy, &ha);
