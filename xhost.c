@@ -160,6 +160,14 @@ XFamily(int af)
 }
 #endif /* NEEDSOCKETS */
 
+#if defined(__CYGWIN__) || defined(WIN32)
+void sethostent(int x)
+{}
+
+void endhostent()
+{}
+#endif
+
 int
 main(int argc, char *argv[])
 {
@@ -842,12 +850,3 @@ local_xerror(Display *dpy, XErrorEvent *rep)
     XmuPrintDefaultErrorMessage (dpy, rep, stderr);
     return 0;
 }
-
-#if defined(__CYGWIN__) || defined(WIN32)
-void sethostent(int x)
-{}
-
-void endhostent()
-{}
-#endif
-
