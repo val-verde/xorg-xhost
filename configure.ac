@@ -2,7 +2,7 @@ dnl Process this file with autoconf to create configure.
 
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([xhost], [1.0.6],
+AC_INIT([xhost], [1.0.7],
         [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg], [xhost])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
