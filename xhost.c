@@ -682,6 +682,8 @@ get_hostname(XHostAddress *ha)
 #endif
 	    sin->sin_family = AF_INET;
 	    sin->sin_port = 0;
+	    if (sizeof(sin->sin_addr) > ha->length)
+		return "";
 	    memcpy(&sin->sin_addr, ha->address, sizeof(sin->sin_addr));
 	    saddrlen = sizeof(struct sockaddr_in);
 	} else {
@@ -691,6 +693,8 @@ get_hostname(XHostAddress *ha)
 #endif
 	    sin6->sin6_family = AF_INET6;
 	    sin6->sin6_port = 0;
+	    if (sizeof(sin6->sin6_addr) > ha->length)
+		return "";
 	    memcpy(&sin6->sin6_addr, ha->address, sizeof(sin6->sin6_addr));
 	    saddrlen = sizeof(struct sockaddr_in6);
 	}
