@@ -519,8 +519,8 @@ change_host(Display *dpy, char *name, Bool add)
 #endif
         ) {
 	ha.family = FamilyInternet;
-	ha.length = 4;		/* but for Cray would be sizeof(addr.s_addr) */
-	ha.address = (char *)&addr; /* but for Cray would be &addr.s_addr */
+	ha.length = sizeof(addr.s_addr);
+	ha.address = (char *) &addr.s_addr;
 	if (add) {
 	    XAddHost (dpy, &ha);
 	    printf ("%s %s\n", name, add_msg);
