@@ -42,6 +42,9 @@ case $host_os in
   ;;
 esac
 
+# Checks for library functions.
+AC_CHECK_FUNCS([inet_aton])
+
 AC_CONFIG_FILES([
 	Makefile
 	man/Makefile])

@@ -509,10 +509,15 @@ change_host(Display *dpy, char *name, Bool add)
     }
 #ifdef NEEDSOCKETS
     /*
-     * First see if inet_addr() can grok the name; if so, then use it.
+     * First see if inet_aton/inet_addr can grok the name; if so, then use it.
      */
     if (((family == FamilyWild) || (family == FamilyInternet)) &&
-	((addr.s_addr = inet_addr(name)) != -1)) {
+#ifdef HAVE_INET_ATON
+	(inet_aton (name, &addr) != 0)
+#else
+	((addr.s_addr = inet_addr(name)) != -1)
+#endif
+        ) {
 	ha.family = FamilyInternet;
 	ha.length = 4;		/* but for Cray would be sizeof(addr.s_addr) */
 	ha.address = (char *)&addr; /* but for Cray would be &addr.s_addr */
